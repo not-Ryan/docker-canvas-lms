@@ -1,0 +1,70 @@
+version: '3'
+
+services:
+  web: &WEB
+    image: instructure/canvas-lms:master
+    volumes:
+      - tmp_data:/usr/src/app/tmp/files
+      - ./config/cache_store.yml:/usr/src/app/config/cache_store.yml
+      - ./config/cassandra.yml:/usr/src/app/config/cassandra.yml
+      - ./config/consul.yml:/usr/src/app/config/consul.yml
+      - ./config/database.yml:/usr/src/app/config/database.yml
+      - ./config/delayed_jobs.yml:/usr/src/app/config/delayed_jobs.yml
+      - ./config/domain.yml:/usr/src/app/config/domain.yml
+      - ./config/dynamic_settings.yml:/usr/src/app/config/dynamic_settings.yml
+      - ./config/new-jenkins/:/usr/src/app/config/new-jenkins/
+      - ./config/outgoing_mail.yml:/usr/src/app/config/outgoing_mail.yml
+      - ./config/redis.yml:/usr/src/app/config/redis.yml
+      - ./config/security.yml:/usr/src/app/config/security.yml
+      - ./config/selenium.yml:/usr/src/app/config/selenium.yml
+    environment:
+      ENCRYPTION_KEY: facdd3a131ddd8988b14f6e4e01039c93crubfa0160
+      PASSENGER_START_TIMEOUT: 500
+    labels:
+      traefik.subdomain: "canvas"
+      traefik.http.routers.canvas.tls: true
+      
+    networks:
+      - traefik_network
+      - default
+    links:
+      - postgres
+      - redis
+
+  postgres:
+    build: ./postgres
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - default
+
+  redis:
+    networks:
+      - default
+    image: redis:alpine
+    
+  jobs:
+    <<: *WEB
+    command: bundle exec script/delayed_job run
+    labels:
+      traefik.enable: false
+
+  # guard:
+  #   <<: *WEB
+  #   labels:
+  #     traefik.enable: false
+
+  # webpack:
+  #   <<: *WEB
+  #   labels:
+  #     traefik.enable: false
+
+
+volumes:
+  pg_data: {}
+  tmp_data: {}
+
+networks:
+  traefik_network:
+    external:
+      name: traefik_default

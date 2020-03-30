@@ -1,0 +1,12 @@
+production: &production
+  address: "mail.devdroplets.com"
+  port: "587"
+  user_name: "noreply@devdroplets.com"
+  password: "439s6N3Nhv"
+  authentication: "plain"
+  domain: "devdroplets.com"
+  outgoing_address: "noreply@devdroplets.com"
+  default_name: "Devdroplets Canvas"
+
+development:
+  <<: *production
