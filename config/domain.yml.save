@@ -1,0 +1,9 @@
+production:
+  domain: "
+anvas.devdroplets.ga"
+
+test:
+  domain: localhost
+
+development:
+  domain: "canvas.devdroplets.ga"

@@ -1,8 +1,8 @@
 production:
-  domain: "canvas.devdroplets.ga"
+  domain: "canvas.oict-lean.ga"
 
 test:
   domain: localhost
 
 development:
-  domain: "canvas.devdroplets.ga"
+  domain: "canvas.oict-lean.ga"

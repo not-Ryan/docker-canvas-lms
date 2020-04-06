@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 
 services:
   web: &WEB
@@ -21,26 +21,21 @@ services:
       ENCRYPTION_KEY: facdd3a131ddd8988b14f6e4e01039c93crubfa0160
       PASSENGER_START_TIMEOUT: 500
     labels:
-      traefik.subdomain: "canvas"
-      traefik.http.routers.canvas.tls: true
+      traefik.enable: "true"
+      traefik.http.routers.canvas.rule: Host(`canvas.oict-lean.ga`)
+      traefik.http.services.canvas.loadbalancer.server.port: 80
+      traefik.http.routers.canvas.entrypoints: https
+      traefik.http.routers.canvas.tls.certresolver: letsencrypt
       
-    networks:
-      - traefik_network
-      - default
-    links:
-      - postgres
-      - redis
+    networks: [default, traefik_public]
+    links: [postgres, redis]
+    depends_on: [postgres, redis]
 
   postgres:
     build: ./postgres
-    volumes:
-      - pg_data:/var/lib/postgresql/data
-    networks:
-      - default
+    volumes: ["pg_data:/var/lib/postgresql/data"]
 
   redis:
-    networks:
-      - default
     image: redis:alpine
     
   jobs:
@@ -65,6 +60,5 @@ volumes:
   tmp_data: {}
 
 networks:
-  traefik_network:
-    external:
-      name: traefik_default
+  traefik_public:
+    external: true
