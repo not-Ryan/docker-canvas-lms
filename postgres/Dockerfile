@@ -23,3 +23,5 @@ RUN pgxnclient download --yes --target ~ pg_collkey=${PG_COLLKEY_VERSION} \
     && sed '/^DATA = \$(wildcard/d' Makefile.orig > Makefile \
     && make \
     && make install
+
+ENV POSTGRES_PASSWORD canvas-lms-password

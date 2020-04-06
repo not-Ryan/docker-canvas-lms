@@ -3,6 +3,7 @@ common: &common
   host: postgres
   encoding: utf8
   username: postgres
+  password: canvas-lms-password
   timeout: 5000
   prepared_statements: false
 
