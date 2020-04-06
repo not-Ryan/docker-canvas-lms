@@ -14,15 +14,15 @@ start:
 
 backup:
 	docker-compose -p $(STACK) stop
-	sudo tar -C /var/lib/docker/volumes/canvas-lms_pg_data/ -cf ./$(BACKUP) _data
+	sudo tar -C /var/lib/docker/volumes/$(STACK)_pg_data/ -cf ./$(BACKUP) _data
 	@echo Created a backup to $(BACKUP)
 	docker-compose -p $(STACK) up -d
 
 restore:
 	docker-compose -p $(STACK) stop
-	sudo rm -rf /var/lib/docker/volumes/canvas-lms_pg_data/_data
-	sudo tar -C /var/lib/docker/volumes/canvas-lms_pg_data/ -xf $(BACKUP)
-	@echo Restored $(BACKUP)
+	sudo rm -rf /var/lib/docker/volumes/$(STACK)_pg_data/_data
+	sudo tar -C /var/lib/docker/volumes/$(STACK)_pg_data/ -xf $(BACKUP)
+	@echo Restored a backup from $(BACKUP)
 	docker-compose -p $(STACK) up -d
 
 clean:
