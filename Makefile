@@ -1,9 +1,10 @@
-DATE := $(date +"%Y-%b-%d_%H:%M")
-BACKUP := backup_$(date +"%Y-%b-%d_%H:%M")
+BACKUP_SLUG := backups/backup_$(shell date +"%Y-%b-%d_%H:%M")
+BACKUP ?= backup
 STACK ?= canvas-lms
 
 logbackup:
 	@echo $(DATE)
+	@echo $(BACKUP_SLUG)
 	@echo $(BACKUP)
 
 restart:
@@ -14,8 +15,8 @@ start:
 
 backup:
 	docker-compose -p $(STACK) stop
-	sudo tar -C /var/lib/docker/volumes/$(STACK)_pg_data/ -cf ./$(BACKUP) _data
-	@echo Created a backup to $(BACKUP)
+	sudo tar -C /var/lib/docker/volumes/$(STACK)_pg_data/ -cf ./$(BACKUP_SLUG) _data
+	@echo Created a backup to $(BACKUP_SLUG)
 	docker-compose -p $(STACK) up -d
 
 restore:
