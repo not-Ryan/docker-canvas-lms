@@ -35,4 +35,11 @@ create:
 	docker run --rm instructure/canvas-lms:master cat yarn.lock > yarn.lock
 	docker-compose -p $(STACK) run --rm web bash -c "bundle; bundle exec rake db:create db:initial_setup"
 
+from_backup:
+	docker-compose -p $(STACK) pull web
+	docker run --rm instructure/canvas-lms:master cat Gemfile.lock > Gemfile.lock
+	docker run --rm instructure/canvas-lms:master cat yarn.lock > yarn.lock
+	docker-compose -p $(STACK) run --rm web bash -c "bundle; bundle exec rake db:create"
+	make restore
+
 recreate: clean create
