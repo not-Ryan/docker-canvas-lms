@@ -31,15 +31,21 @@ clean:
 
 create:
 	docker-compose -p $(STACK) pull web
+	make implement_custom
 	docker run --rm instructure/canvas-lms:master cat Gemfile.lock > Gemfile.lock
 	docker run --rm instructure/canvas-lms:master cat yarn.lock > yarn.lock
 	docker-compose -p $(STACK) run --rm web bash -c "bundle; bundle exec rake db:create db:initial_setup"
 
 from_backup:
 	docker-compose -p $(STACK) pull web
+	make implement_custom
 	docker run --rm instructure/canvas-lms:master cat Gemfile.lock > Gemfile.lock
 	docker run --rm instructure/canvas-lms:master cat yarn.lock > yarn.lock
 	docker-compose -p $(STACK) run --rm web bash -c "bundle; bundle exec rake db:create"
 	make restore
 
 recreate: clean create
+
+implement_custom: 
+	@echo Implementing custom files...
+	docker cp customs/login.html.erb $(STACK)_web_1:/usr/src/app/app/views/login/canvas/_new_login_content.html.erb
